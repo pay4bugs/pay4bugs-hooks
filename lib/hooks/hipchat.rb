@@ -10,7 +10,7 @@ class Hook::HipChat < Hook
   end
 
   def submitted_message
-    "#{payload["performer"]} submitted the following bug report for <a href='#{project_url}'>#{payload["project"][:name]}</a>:<br>-<a href='#{bug_queue_url}'>#{payload["bug"]["summary"]}</a>"
+    "#{payload["performer"]} submitted the following bug report for <a href='#{project_url}'>#{payload["project"]["name"]}</a>:<br>-<a href='#{bug_queue_url}'>#{payload["bug"]["summary"]}</a>"
   end
 
 

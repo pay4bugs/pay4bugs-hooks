@@ -10,11 +10,11 @@ module Hook::BugHelpers
   end
 
   def approved?
-    payload[:action] == "approved"
+    payload["action"] == "approved"
   end
   
   def submitted?
-    payload[:action] == "submitted"
+    payload["action"] == "submitted"
   end
   
   def bug_queue_url
