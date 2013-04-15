@@ -6,13 +6,13 @@ class Hook::HipChat < Hook
   default_events :bug
 
   def approved_message
+    "#{payload["performer"]} approved the following bug report for <a href='#{project_url}'>#{payload["project"]["name"]}</a>:<br>-<a href='#{bug_url}'>#{payload["bug"]["summary"]}</a>"
+  end
+
+  def submitted_message
     "#{payload["performer"]} submitted the following bug report for <a href='#{project_url}'>#{payload["project"][:name]}</a>:<br>-<a href='#{bug_queue_url}'>#{payload["bug"]["summary"]}</a>"
   end
 
-
-  def submitted_message
-    "#{payload["performer"]} approved the following bug report for <a href='#{project_url}'>#{payload["project"]["name"]}</a>:<br>-<a href='#{bug_url}'>#{payload["bug"]["summary"]}</a>"
-  end
 
   def receive_event
     # make sure we have what we need
