@@ -1,5 +1,3 @@
-Dir["#{File.dirname(__FILE__)}/../../hooks/**/*.rb"].each { |service| load service }
-
 # The Sinatra App that handles incoming events.
 class Hook::App < Sinatra::Base
   JSON_TYPE = "application/vnd.pay4bugs-hook+json"
