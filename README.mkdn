@@ -1,32 +1,32 @@
-GitHub Services
+Pay4Bugs Hooks
 ===============
 
 How the services work
 ---------------------
 
-1. A post-receive background job is submitted when someone pushes their
-   commits to GitHub
-2. If the repository the commits belong to has any "Service Hooks" set up, the
-   job makes a request to `http://services-server/service_name/push` with the
+1. A  background job is submitted when a bug is submitted or approved on Pay4Bugs
+2. If the project the bug is submitted to has any "Service Hooks" set up, the
+   job makes a request to `http://hooks-server/service_name/bug` with the
    following data:
     - `params[:payload]` containing all of the commit data (the same data you get using the API)
     - `params[:data]` containing the service data (username, password, room, etc)
-3. Sinatra (github-services.rb) processes the request (tweets your data, says
-   something in campfire, posts it to lighthouse, etc)
+3. Sinatra (pay4bugs-hooks-server.rb) processes the request (tweets your data, says
+   something in hipchat, posts it to lighthouse, etc)
 4. Rinse and repeat
 
 Steps to contributing
 ---------------------
 
-Start by reading the [Contributing Guidelines](https://github.com/github/github-services/blob/master/CONTRIBUTING.md).
+Start by reading the [Contributing Guidelines](https://github.com/pay4bugs/pay4bugs-hooks/blob/master/CONTRIBUTING.md).
 
 1. Fork the project
-2. Create a new file in /services/ called `service_name.rb`, using the [following
-   template](https://github.com/github/github-services/tree/master/lib/services#readme):
+2. Create a new file in /hooks/ called `service_name.rb`, using the [following
+   template](https://github.com/pay4bugs/pay4bugs-hooks/tree/master/lib/services#readme):
 
     ```ruby
-    class Service::ServiceName < Service
-      def receive_push
+    class Hook::ServiceName < Hook
+      string :auth_token, :room
+      def receive_event
       end
     end
     ```
@@ -34,9 +34,9 @@ Start by reading the [Contributing Guidelines](https://github.com/github/github-
 3. Vendor any external gems your code relies on, and make sure it is
    specified in the Gemfile.
 4. Add documentation to `docs/service_name` (refer to the others for guidance)
-5. Send a pull request from your fork to [github/github-services](https://github.com/github/github-services)
-6. Once it's accepted we'll add any new necessary data fields to the GitHub
-   front-end so people can start using your addition.
+5. Send a pull request from your fork to [pay4bugs/pay4bugs-hooks](https://github.com/pay4bugs/pay4bugs-hooks)
+6. Any new necessary data fields in the Pay4Bugs
+   front-end so people can start using your service hook will be generated from the schema values you provide in the hook file. No validation will be done on user input.
 
 *Patches including tests are required*
 
@@ -46,13 +46,13 @@ Running the server locally
 --------------------------
 
 1. [sudo] gem install hpricot
-2. git clone git://github.com/github/github-services.git
-3. cd github-services
-4. ruby github-services.rb
+2. git clone git://github.com/pay4bugs/pay4bugs-hooks.git
+3. cd pay4bugs-hooks
+4. ruby pay4bugs-hooks-server.rb
 
 * Bugs in the code should be filed under the Issues tab
 * Problems with the service hooks can be filed
-  [here](https://github.com/contact)
+  [here](https://www.pay4bugs.com/contact)
 
 How to test your service
 ------------------------
@@ -61,57 +61,33 @@ You can test your service in a ruby irb console:
 
 0. Cache gems and install them to `vendor/gems` by doing:
    `script/bootstrap`
-1. Start irb: `bundle exec irb -r config/load.rb -r lib/services/myservice.rb`
-2. Instantiate your Service:
+1. Start irb: `bundle exec irb -r config/load.rb -r lib/hooks/myservice.rb`
+2. Instantiate your Service Hook:
 
     ```ruby
-    svc = Service::MyService.new(:push,
+    hook = Hook::MyService.new(:bug,
       # Hash of configuration information.
       {'token' => 'abc'},
       # Hash of payload.
       {'blah' => 'payload!'})
 
-    svc.receive_push
+    hook.receive_event
     ```
 
 3. The third argument is optional if you just want to use the sample
    payload.
 
     ```ruby
-    svc = Service::MyService.new(:push,
+    hook = Hook::MyService.new(:push,
       # Hash of configuration information.
       {'token' => 'abc'})
 
-    svc.receive_push
+    hook.receive_event
     ```
 
 You can also use this one-liner in the shell instead:
 
   ```bash
-  bundle exec ruby -r config/load.rb -r lib/services/myservice.rb -e \
-    "Service::MyService.new(:push, {'foo' => 'bar'}).receive_push"
+  bundle exec ruby -r config/load.rb -r lib/hooks/myservice.rb -e \
+    "Hook::MyService.new(:bug, {'foo' => 'bar'}).receive_event"
   ```
-You can also test your hook with the Sinatra web service:
-
-1. Start the github-services Sinatra server with `ruby github-services.rb`. By
-   default, it runs on port 8080.
-2. Edit the docs/github_payload file as necessary to test your service.  (Usually
-   just editing the "data" values but leaving the "payload" alone.)
-3. Send the docs/github_payload file to your service by calling:
-   `./script/deliver_payload [service-name]`
-
-Other hook types
-----------------
-
-The default hook for a service is `push`. You may wish to have services respond
-to other event types, like `pull_request` or `issues`. The full list may be
-found in [service.rb](https://github.com/github/github-services/blob/master/lib/service.rb#L106).
-Unless your service specifies `default_events <list_of_types>`, only the `push`
-hook will be called, see
-[service.rb#default_events](https://github.com/github/github-services/blob/master/lib/service.rb#L198).
-
-To make use of these additional types, your service will either need to define
-`receive_<type>` (like `receive_pull_request_review_comment`) or a generic
-`receive_event`.
-
-You can read more about the Hooks in the [API Documentation](http://developer.github.com/v3/repos/hooks/).
