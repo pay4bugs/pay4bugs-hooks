@@ -40,7 +40,7 @@ Start by reading the [Contributing Guidelines](https://github.com/pay4bugs/pay4b
 
 *Patches including tests are required*
 
-A huge thanks goes out to [our many contributors](https://github.com/github/github-services/contributors)!
+A huge thanks goes out to [our many contributors](https://github.com/pay4bugs/pay4bugs-hooks/contributors)!
 
 Running the server locally
 --------------------------
