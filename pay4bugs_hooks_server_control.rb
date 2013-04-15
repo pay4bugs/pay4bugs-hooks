@@ -5,4 +5,4 @@ if ARGV[1] && File.directory?(ARGV[1])
 else
   p "No valid PID directory given"
 end
-Daemons.run('pay4bugs_hooks_server.rb' )
+Daemons.run('pay4bugs_hooks_server.rb', options)
