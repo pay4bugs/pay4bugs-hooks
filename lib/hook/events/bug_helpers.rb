@@ -1,13 +1,7 @@
 # This is a set of common helpers for Bug events.
 module Hook::BugHelpers
 
-  def summary_message
-   
-  end
 
-  def summary_url
-  
-  end
 
   def approved?
     payload["action"] == "approved"
