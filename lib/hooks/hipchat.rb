@@ -3,7 +3,7 @@ class Hook::HipChat < Hook
   boolean :notify
   white_list :room
 
-  default_events :bug
+  default_events :bug_submitted, :bug_approved
 
   def approved_message
     "#{payload["performer"]} approved the following bug report for <a href='#{project_url}'>#{payload["project"]["name"]}</a>:<br>-<a href='#{bug_url}'>#{payload["bug"]["summary"]}</a>"

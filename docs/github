@@ -1,4 +1,9 @@
-**Generate a Github OAuth Authorization Token:**
+Configuration Notes
+-------------
+
+This hook creates a new GitHub Issue for each bug you approve on Pay4Bugs.
+
+1. Generate a Github OAuth Authorization Token:**
 
     curl -u 'username' -d '{"scopes":["repo"],"note":"Pay4Bugs"}' https://api.github.com/authorizations
     Enter host password for user 'username':
@@ -20,4 +25,8 @@
     }
 
 
-**Copy the value for "token" into the "Token" box above.**
+2. Copy the value for ***token*** into the "Token" box above.**
+
+3. Enter the owner and repository: If the URL for your repository is: https://github.com/pay4bugs/pay4bugs-hooks,
+the owner is "pay4bugs" and the repository is "pay4bugs-hooks"
+

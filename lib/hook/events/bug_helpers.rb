@@ -1,8 +1,6 @@
 # This is a set of common helpers for Bug events.
 module Hook::BugHelpers
 
-
-
   def approved?
     payload["action"] == "approved"
   end

@@ -69,14 +69,16 @@ class Hook
 
   dir = File.expand_path '../hook', __FILE__
   Dir["#{dir}/events/helpers/*.rb"].each do |helper|
+    p "Loading #{helper}"
     require helper
   end
   Dir["#{dir}/events/*.rb"].each do |helper|
+    p "Loading #{helper}"
     require helper
   end
 
   ALL_EVENTS = %w[
-    bug 
+    bug_approved bug_submitted
   ].sort
 
   class << self
@@ -119,12 +121,12 @@ class Hook
 
     # Gets the default events that this Hook will listen for.  This defines
     # the default event configuration when Hooks are created on Pay4Bugs.  By
-    # default, Pay4Bugs Hooks will only send `bug` events.
+    # default, Pay4Bugs Hooks will only send `bug_approved` events.
     #
     # Returns an Array of Strings (or Symbols).
     def default_events(*events)
       if events.empty?
-        @default_events ||= [:bug]
+        @default_events ||= [:bug_approved]
       else
         @default_events = events
       end
@@ -481,10 +483,20 @@ class Hook
   attr_reader :remote_calls
 
   def initialize(event = :bug, data = {}, payload = nil)
+  
+    # load event specific helpers
     helper_name = "#{event.to_s.classify}Helpers"
     if Hook.const_defined?(helper_name)
       @helper = Hook.const_get(helper_name)
       extend @helper
+    end
+
+    # load event category helpers
+    # eg. bug_submitted & bug_approved events both load BugHelpers
+    category_helper_name = "#{event.to_s.split("_")[0].classify}Helpers"
+    if Hook.const_defined?(category_helper_name)
+      @category_helper = Hook.const_get(category_helper_name)
+      extend @category_helper
     end
 
     @event = event.to_sym
@@ -620,6 +632,7 @@ class Hook
 
     check_ssl do
       http.send(method) do |req|
+        req.headers["User-Agent"] = "Pay4Bugs Hooks Worker Bee" 
         req.url(url)                if url
         req.headers.update(headers) if headers
         req.body = body             if body
@@ -775,7 +788,7 @@ class Hook
   #
   # Returns a Hash payload.
   def sample_payload
-    @helper ? @helper.sample_payload : {}
+    @category_helper ? @category_helper.sample_payload : (@helper ? @helper.sample_payload : {})
   end
 
   # Raised when an unexpected error occurs during service hook execution.

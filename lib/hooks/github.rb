@@ -3,10 +3,10 @@ class Hook::Github < Hook
   password :token
   white_list :owner, :repository
 
-  default_events :bug
+  default_events :bug_approved
 
 
-  def receive_event
+  def receive_bug_approved
     # make sure we have what we need
     raise_config_error "Missing 'token'" if data['token'].to_s == ''
     raise_config_error "Missing 'owner'" if data['owner'].to_s == ''
@@ -16,9 +16,11 @@ class Hook::Github < Hook
 
   
     
-      res = http_post "https://api.github.com/repos/#{data['owner']}/#{data['repository']}/issues",
-        title: payload["bug"]["summary"],
-        body: body
+      res = http_post "https://api.github.com/repos/#{data['owner']}/#{data['repository']}/issues" do |req|
+        req.body = {'title' => payload["bug"]["summary"], 'body' => body }.to_json 
+        req.headers["Authorization"] = "token #{data['token']}"
+       
+      end
       if res.status < 200 || res.status > 299
         raise_config_error
       end
@@ -30,7 +32,11 @@ class Hook::Github < Hook
   private
 
   def body 
-    payload["bug"]["action_performed"] + payload["bug"]["expected_result"] + payload["bug"]["actual_result"] + payload["bug"]["user_agent"] + payload["bug"]["ip_address"]
+    payload["bug"]["action_performed"] + "  \n\n" + 
+    payload["bug"]["expected_result"] + "  \n\n" +
+    payload["bug"]["actual_result"] + "\n\n" +
+    payload["bug"]["user_agent"] + "  \n" + 
+    payload["bug"]["ip_address"]
   end
 
   

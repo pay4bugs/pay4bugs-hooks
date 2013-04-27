@@ -6,9 +6,9 @@ class Hook::App < Sinatra::Base
   set :bind, 'localhost'
   set :port, 8080
 
-  # Hooks the given Service to a Sinatra route.
+  # Hooks the given Hook to a Sinatra route.
   #
-  # svc_class - Service class.
+  # svc_class - Hook class.
   #
   # Returns nothing.
   def self.hook(svc_class)
@@ -28,7 +28,7 @@ class Hook::App < Sinatra::Base
           "OK"
         else
           log_service_request svc, 200
-          "#{svc_class.hook_name} Hook does not respond to 'push' events"
+          "#{svc_class.hook_name} hook does not respond to '#{event}' events"
         end
       rescue Faraday::Error::ConnectionFailed => boom
         log_service_request svc, 503
@@ -120,14 +120,14 @@ class Hook::App < Sinatra::Base
    #   data['service_data'] = service_data.inspect
    # end
 
-    if settings.hostname =~ /^sh1\.(rs|stg)\.github\.com$/
-      # run only in github's production environment
-      Net::HTTP.new('haystack', 80).
-        post('/async', "json=#{Rack::Utils.escape(data.to_json)}")
-    else
+    #if settings.hostname =~ /^sh1\.(rs|stg)\.github\.com$/
+    #  # run only in github's production environment
+    #  Net::HTTP.new('haystack', 80).
+    #    post('/async', "json=#{Rack::Utils.escape(data.to_json)}")
+    #else
       $stderr.puts data[ 'message' ]
       $stderr.puts data[ 'backtrace' ]
-    end
+    #end
 
   rescue => boom
     $stderr.puts "reporting exception failed:"
