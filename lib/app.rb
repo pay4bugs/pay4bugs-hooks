@@ -81,14 +81,15 @@ class Hook::App < Sinatra::Base
 
   def parse_json_request
     req = JSON.parse(request.body.read)
-    [params[:event], req['data'], req['payload']]
+    event = params[:event].gsub(".","_")
+    [event, req['data'], req['payload']]
   end
 
   def parse_http_request
-    p "params[:data]: #{params[:data]}"
     data = JSON.parse(params[:data])
     payload = JSON.parse(params[:payload])
-    [params[:event], data, payload]
+    event = params[:event].gsub(".","_")
+    [event, data, payload]
   end
 
   def log_service_request(svc, code)

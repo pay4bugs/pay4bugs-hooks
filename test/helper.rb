@@ -16,7 +16,7 @@ class Hook::TestCase < Test::Unit::TestCase
     else
       payload = data
       data    = event_or_data
-      event   = :bug
+      event   = :bug_approved
     end
 
     hook = klass.new(event, data, payload)
@@ -28,7 +28,7 @@ class Hook::TestCase < Test::Unit::TestCase
     "Basic " + ["#{user}:#{pass}"].pack("m*").strip
   end
   
-  def bug_payload
+  def bug_approved_payload
     Hook::BugHelpers.sample_payload
   end
   

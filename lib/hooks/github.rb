@@ -17,7 +17,7 @@ class Hook::Github < Hook
   
     
       res = http_post "https://api.github.com/repos/#{data['owner']}/#{data['repository']}/issues" do |req|
-        req.body = {'title' => payload["bug"]["summary"], 'body' => body }.to_json 
+        req.body = {'title' => payload["data"]["object"]["summary"], 'body' => payload["data"]["object"]["body"] }.to_json 
         req.headers["Authorization"] = "token #{data['token']}"
        
       end
@@ -25,19 +25,5 @@ class Hook::Github < Hook
         raise_config_error
       end
   end
-  
-   
-
-
-  private
-
-  def body 
-    payload["bug"]["action_performed"] + "  \n\n" + 
-    payload["bug"]["expected_result"] + "  \n\n" +
-    payload["bug"]["actual_result"] + "\n\n" +
-    payload["bug"]["user_agent"] + "  \n" + 
-    payload["bug"]["ip_address"]
-  end
-
   
 end

@@ -5,7 +5,7 @@ class HipChatTest < Hook::TestCase
     @stubs = Faraday::Adapter::Test::Stubs.new
   end
 
-  def test_bug
+  def test_bug_approved
     payload = {'a' => 1, 'ref' => 'refs/heads/master'}
     @stubs.post "/v1/webhooks/" do |env|
       form = Rack::Utils.parse_query(env[:body])

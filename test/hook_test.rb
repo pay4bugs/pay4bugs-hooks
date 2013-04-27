@@ -13,19 +13,19 @@ class HookTest < Hook::TestCase
 
   def setup
     @stubs = Faraday::Adapter::Test::Stubs.new
-    @hook = hook(:bug, 'data', 'payload')
+    @hook = hook(:bug_approved, 'data', 'payload')
   end
 
   def test_receive_valid_event
-    assert TestHook.receive :bug, {}, {}
+    assert TestHook.receive :bug_approved, {}, {}
   end
 
   def test_specific_event_method
-    assert_equal 'receive_bug', TestHook.new(:bug, {}, {}).event_method
+    assert_equal 'receive_bug', TestHook.new(:bug_approved, {}, {}).event_method
   end
 
   def test_catch_all_event_method
-    assert_equal 'receive_event', TestCatchAllHook.new(:push, {}, {}).event_method
+    assert_equal 'receive_event', TestCatchAllHook.new(:bug_approved, {}, {}).event_method
   end
 
 
