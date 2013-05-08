@@ -6,12 +6,12 @@ How the services work
 
 1. A  background job is submitted when a bug is submitted or approved on Pay4Bugs
 2. If the project the bug is submitted to has any "Service Hooks" set up, the
-   job makes a request to `http://hooks-server/service_name/bug` with the
+   job makes a request to `http://hooks-server/service_name/event_name` with the
    following data:
-    - `params[:payload]` containing all of the commit data (the same data you get using the API)
+    - `params[:payload]` containing all of the event data.
     - `params[:data]` containing the service data (username, password, room, etc)
-3. Sinatra (pay4bugs-hooks-server.rb) processes the request (tweets your data, says
-   something in hipchat, posts it to lighthouse, etc)
+3. Sinatra (pay4bugs-hooks-server.rb) processes the request (says
+   something in hipchat, opens an issue on github, etc)
 4. Rinse and repeat
 
 Steps to contributing
@@ -65,9 +65,9 @@ You can test your service in a ruby irb console:
 2. Instantiate your Service Hook:
 
     ```ruby
-    hook = Hook::MyService.new(:bug,
+    hook = Hook::MyService.new(:bug_approved,
       # Hash of configuration information.
-      {'token' => 'abc'},
+      {'auth_token' => 'abc'},
       # Hash of payload.
       {'blah' => 'payload!'})
 
@@ -80,7 +80,7 @@ You can test your service in a ruby irb console:
     ```ruby
     hook = Hook::MyService.new(:push,
       # Hash of configuration information.
-      {'token' => 'abc'})
+      {auth_token' => 'abc'})
 
     hook.receive_event
     ```
