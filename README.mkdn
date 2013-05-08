@@ -21,7 +21,7 @@ Start by reading the [Contributing Guidelines](https://github.com/pay4bugs/pay4b
 
 1. Fork the project
 2. Create a new file in /hooks/ called `service_name.rb`, using the [following
-   template](https://github.com/pay4bugs/pay4bugs-hooks/tree/master/lib/services#readme):
+   template](https://github.com/pay4bugs/pay4bugs-hooks/tree/master/lib/hooks#readme):
 
     ```ruby
     class Hook::ServiceName < Hook
