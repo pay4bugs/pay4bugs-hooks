@@ -10,7 +10,7 @@ module Hook::BugHelpers
   end
   
   def bug_queue_url
-    "https://www.pay4bugs.com/c/bugs/queue"
+    "https://www.pay4bugs.com/c/bugs/queue/#{payload["data"]["object"]["assignment"]["id"]}"
   end
  
   def project_url
@@ -43,7 +43,9 @@ module Hook::BugHelpers
             "action_performed"=>"Bought a Bizy Bee",
             "expected_result"=>"Expected Bizy Bee to Buzz", 
             "actual_result"=>"Bizy Bee is dead", 
-            "assignment"=>"Find Bizy Bee Bugs", 
+            "assignment"=> {
+            "id" => 333,
+            "name" => "Find Bizy Bee Bugs"}, 
             "project"=>
             {
               "id"=>888, 
